@@ -1,10 +1,10 @@
 import express from 'express'
-import './core/dby'
+import '../core/db'
 import { validationResult } from 'express-validator';
 import {UserModel} from '../models/UserModel'
 import { generateMD5 } from '../utils/generateHash';
-import mailer from '../core/mailer'
 import { SentMessageInfo } from 'nodemailer';
+import { sendEmail } from '../utils/sendEmail';
 
 class UserController{
     async index(_ : any, res: express.Response): Promise<void>{
@@ -17,12 +17,13 @@ class UserController{
 
             
         } catch (error) {
-            res.json({
+            res.status(500).json({
                 status: 'error',
                 message: JSON.stringify(error)
             })
         }
     }
+
     async create(req: express.Request, res: express.Response): Promise<void>{
         try {
             const errors = validationResult(req)
@@ -35,29 +36,58 @@ class UserController{
                 username: req.body.username,
                 fullname: req.body.fullname,
                 password: req.body.password,
-                confirm_hash: generateMD5(process.env.SECRET_KEY || Math.random().toString())
+                confirmHash: generateMD5(process.env.SECRET_KEY || Math.random().toString())
             }
 
             const user = await UserModel.create(data)
-            res.json({
-                status: 'success',
-                data: user
-            })
-            mailer.sendMail({
-                from: "admin@test.com",
-                to: data.email,
+            
+            sendEmail({
+                emailFrom: "admin@test.com",
+                emailTo: data.email,
                 subject: 'Подтверждение почты',
-                html: `Для подтверждения перейдите на <a href="http:localhost:${process.env.PORT || 8888}/signup/verify?hash=${data.confirm_hash}>по этой ссылке</a>"`
+                html: `Для подтверждения перейдите на 
+                <a href="http:localhost:${process.env.PORT || 8888}/users/verify?hash=${data.confirmHash}>по этой ссылке</a>"`,   
             },
-            function(err: Error | null, info: SentMessageInfo){
+            (err: Error | null, info: SentMessageInfo)=>{
                 if(err){
-                    console.log(err);
+                    res.json({
+                        status: 'error',
+                        message: JSON.stringify(err)
+                    })                 
                 }else{
-                    console.log(info);   
+                    res.json({
+                        status: 'success',
+                        data: user
+                    })
                 }
             })
+            
         } catch (error) {
+            res.status(500).json({
+                status: 'error',
+                message: JSON.stringify(error)
+            })
+        }
+    }
+
+    async verify(req : any, res: express.Response): Promise<void>{
+        try {
+            const hash = req.query.hash
+
+            if(!hash){
+                res.status(500).send()
+                return
+            }
+
+            const users = await UserModel.find({}).exec();
             res.json({
+                status:'success',
+                data: users
+            })
+
+            
+        } catch (error) {
+            res.status(500).json({
                 status: 'error',
                 message: JSON.stringify(error)
             })
