@@ -1,11 +1,12 @@
 import express from 'express'
 import '../core/db'
 import { validationResult } from 'express-validator';
-import {UserModel, UserModelInterface} from '../models/UserModel'
+import {UserModel, UserModelDocumentInterface, UserModelInterface} from '../models/UserModel'
 import { generateMD5 } from '../utils/generateHash';
 import { SentMessageInfo } from 'nodemailer';
 import { sendEmail } from '../utils/sendEmail';
 import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken'
 
 
 const isValidObjectId = mongoose.Types.ObjectId.isValid
@@ -130,6 +131,32 @@ class UserController{
                 status: 'error',
                 message: error
             })
+        }
+    }
+
+    async afterLogin(req: any, res: any):Promise<void>{
+        try {
+            res.json({
+                status:'success',
+                data:{
+                    ...req.user,
+                    token: jwt.sign(req.user,process.env.SECRET_KEY|| '123', {expiresIn: '30d'})
+                }
+            })
+        } catch (error) {
+            
+        }
+    }
+
+    async getUserInfo(req: any, res: any):Promise<void>{
+        try {
+            const user = req.user ? (req.user as UserModelDocumentInterface).toJSON(): undefined
+            res.json({
+                status:'success',
+                data:user
+            })
+        } catch (error) {
+            
         }
     }
 }

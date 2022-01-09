@@ -6,6 +6,7 @@ export interface UserModelInterface{
     fullname: string;
     username: string;
     password: string;
+    _id?: string;
     confirmHash: string;
     confirmed?: boolean;
     location?: string;
@@ -13,7 +14,7 @@ export interface UserModelInterface{
     website?: string;
 }
 
-type UserModelDocumentInterface = UserModelInterface & Document
+export type UserModelDocumentInterface = UserModelInterface & Document
 
 const UserSchema = new Schema<UserModelInterface>({
     email: {
