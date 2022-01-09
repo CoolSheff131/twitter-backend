@@ -5,6 +5,10 @@ import {UserModel, UserModelInterface} from '../models/UserModel'
 import { generateMD5 } from '../utils/generateHash';
 import { SentMessageInfo } from 'nodemailer';
 import { sendEmail } from '../utils/sendEmail';
+import mongoose from 'mongoose';
+
+
+const isValidObjectId = mongoose.Types.ObjectId.isValid
 
 class UserController{
     async index(_ : any, res: express.Response): Promise<void>{
@@ -20,6 +24,34 @@ class UserController{
             res.status(500).json({
                 status: 'error',
                 message: JSON.stringify(error)
+            })
+        }
+    }
+
+    async show(req : any, res: express.Response): Promise<void>{
+        try {
+            const userId = req.params.id
+
+            if(!isValidObjectId(userId)){
+                res.status(400).send()
+                return
+            }
+
+            const user = await UserModel.findById(userId).exec();
+            if(!user){
+                res.status(404).send()
+                return
+            }
+            res.json({
+                status:'success',
+                data: user
+            })
+
+            
+        } catch (error) {
+            res.status(500).json({
+                status: 'error',
+                message: error
             })
         }
     }

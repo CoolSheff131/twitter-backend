@@ -12,6 +12,7 @@ app.use(express.json())
 
 app.get('/users',UserCtrl.index)
 app.post('/users', registerValidation, UserCtrl.create)
+app.get('/users/:id', registerValidation, UserCtrl.show)
 app.get('/users/verify', registerValidation, UserCtrl.verify)
 // app.patch('/users',UserCtrl.update)
 // app.delete('/users',UserCtrl.delete)
