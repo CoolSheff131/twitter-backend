@@ -2,12 +2,12 @@ import express from 'express'
 
 const app = express();
 
-app.get('/hello',(_, res: express.Response)=>{
-    res.send('Hello')
-})
+
+
+app.get('/users')
 
 app.listen(8888,()=>{
     
-    console.log('server runned');
+    console.log('server started');
     
 })
