@@ -3,6 +3,9 @@ import './core/dby'
 import { validationResult } from 'express-validator';
 import {UserModel} from '../models/UserModel'
 import { generateMD5 } from '../utils/generateHash';
+import mailer from '../core/mailer'
+import { SentMessageInfo } from 'nodemailer';
+
 class UserController{
     async index(_ : any, res: express.Response): Promise<void>{
         try {
@@ -11,6 +14,8 @@ class UserController{
                 status:'success',
                 data: users
             })
+
+            
         } catch (error) {
             res.json({
                 status: 'error',
@@ -37,6 +42,19 @@ class UserController{
             res.json({
                 status: 'success',
                 data: user
+            })
+            mailer.sendMail({
+                from: "admin@test.com",
+                to: data.email,
+                subject: 'Подтверждение почты',
+                html: `Для подтверждения перейдите на <a href="http:localhost:${process.env.PORT || 8888}/signup/verify?hash=${data.confirm_hash}>по этой ссылке</a>"`
+            },
+            function(err: Error | null, info: SentMessageInfo){
+                if(err){
+                    console.log(err);
+                }else{
+                    console.log(info);   
+                }
             })
         } catch (error) {
             res.json({

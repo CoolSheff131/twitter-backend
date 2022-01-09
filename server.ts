@@ -15,7 +15,7 @@ app.post('/users', registerValidation, UserCtrl.create)
 // app.patch('/users',UserCtrl.update)
 // app.delete('/users',UserCtrl.delete)
 
-app.listen(8888,()=>{
+app.listen(process.env.PORT,()=>{
     
     console.log('server started');
     
