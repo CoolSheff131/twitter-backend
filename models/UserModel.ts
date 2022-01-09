@@ -1,3 +1,4 @@
+//@ts-nocheck
 import {model, Schema, Document} from 'mongoose'
 
 export interface UserModelInterface{
@@ -6,7 +7,7 @@ export interface UserModelInterface{
     username: string;
     password: string;
     confirmHash: string;
-    confirmed: boolean;
+    confirmed?: boolean;
     location?: string;
     about?: string;
     website?: string;
