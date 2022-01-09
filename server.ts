@@ -1,9 +1,12 @@
+import dotenv from 'dotenv'
 import express from 'express'
-import validator from 'express-validator'
 import { UserCtrl } from './controllers/UserController';
 import { registerValidation } from './validations/register';
 
+dotenv.config()
+
 const app = express();
+
 
 app.use(express.json())
 
