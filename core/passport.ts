@@ -1,5 +1,5 @@
 import passport from 'passport'
-import {Strategy as LocalStrategy} from 'passport-local'
+import { Strategy as LocalStrategy} from 'passport-local'
 import {Strategy as JWTstrategy, ExtractJwt} from 'passport-jwt'
 import { UserModel, UserModelInterface } from '../models/UserModel'
 import { generateMD5 } from '../utils/generateHash'
@@ -8,6 +8,8 @@ import { generateMD5 } from '../utils/generateHash'
 
 passport.use(
     new LocalStrategy(
+        {usernameField:'username',
+        passwordField: 'password'},
         async (username,password,done): Promise<void> =>{
         try {
             console.log('aaa');
@@ -36,7 +38,8 @@ passport.serializeUser((user: any,done: any)=>{
 
 passport.deserializeUser((id,done)=>{
     UserModel.findById(id,(err: any,user: any)=>{
-        done(err, user)
+        err? done(err):
+        done(null, user)
     })
 })
 
@@ -44,13 +47,17 @@ passport.use(
     new JWTstrategy(
         {
             secretOrKey: process.env.SECRET_KEY || '123',
-            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
+            jwtFromRequest: ExtractJwt.fromHeader('token')
         },
-        async (payload, done)=>{
+        async (payload: {data: UserModelInterface}, done)=>{
             try {
-                return done(null, payload.user)
+                const user = await UserModel.findById(payload.data._id).exec()
+                if(user){
+                    return done(null, user)
+                }
+                done(null, false)
             } catch (error) {
-                done(error)
+                done(error,false)
             }
         }
     )

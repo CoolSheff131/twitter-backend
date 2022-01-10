@@ -78,7 +78,7 @@ class UserController{
                 emailFrom: "admin@test.com",
                 emailTo: data.email,
                 subject: 'Подтверждение почты',
-                html: `Для подтверждения перейдите на <a href="http:localhost:${process.env.PORT || 8888}/users/verify?hash=${data.confirmHash}">по этой ссылке</a>`,   
+                html: `Для подтверждения перейдите на <a href="http:localhost:${process.env.PORT || 8888}/auth/verify?hash=${data.confirmHash}">по этой ссылке</a>`,   
             },
             (err: Error | null, info: SentMessageInfo)=>{
                 if(err){
@@ -135,16 +135,23 @@ class UserController{
     }
 
     async afterLogin(req: any, res: any):Promise<void>{
+        
         try {
+            //const user = req.user ? (req.user as UserModelDocumentInterface).toJSON(): undefined
+            
+            
             res.json({
                 status:'success',
                 data:{
                     ...req.user,
-                    token: jwt.sign(req.user,process.env.SECRET_KEY|| '123', {expiresIn: '30d'})
+                    token: jwt.sign({data: req.user},process.env.SECRET_KEY|| '123', {expiresIn: '30d'})
                 }
             })
         } catch (error) {
-            
+            res.status(500).json({
+                status: 'error',
+                message: error
+            })
         }
     }
 
