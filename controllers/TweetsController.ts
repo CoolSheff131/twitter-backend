@@ -56,30 +56,27 @@ class TweetsController{
 
     async create(req: express.Request, res: express.Response): Promise<void>{
         try {
-            console.log('IN');
-            
             const user = req.user as UserModelInterface;
-            if(user?._id){
-                console.log('IN');
+            if(user?._id){   
                 const errors = validationResult(req)
                 if(!errors.isEmpty()){
                     res.status(400).json({status: 'error', error: errors.array()})
                     return
                 }
-                console.log('IN');
+                
                 const data: TweetModelInterface = {
                     
                     text: req.body.text,
                     user: user._id
                 }
-                console.log('IN');
+                
                 const tweet = await TweetModel.create(data)
-                console.log('IN');
+                
                 res.json({
                     status: 'success',
                     data: tweet
                 })
-                console.log('IN');
+                
                 return
             }
             res.status(400).json({status: 'error'})
@@ -95,14 +92,15 @@ class TweetsController{
         try {
             if(user){
                 const tweetId = req.params.id
-
                 if(!isValidObjectId(tweetId)){
                     res.status(400).send()
                     return
                 }
-
+                
                 const tweet = await TweetModel.findById(tweetId)
-                if(tweet && tweet.user === user._id){
+                //if(tweet && String(tweet.user._id) === String(user._id)){
+                if(tweet ){
+                    
                     tweet.remove()
                     res.send()
                 }else{
