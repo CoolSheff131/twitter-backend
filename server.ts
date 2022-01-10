@@ -8,6 +8,8 @@ import { registerValidation } from './validations/register';
 import cookieParser from 'cookie-parser'
 import bodyParser from 'body-parser'
 import session from 'express-session'
+import { TweetsCtrl } from './controllers/TweetsController';
+import { createTweetValidations } from './validations/createTweet';
 
 const app = express();
 
@@ -22,12 +24,30 @@ app.use(passport.session());
 app.get('/users',UserCtrl.index)
 app.get('/users/me', passport.authenticate('jwt',{session: false}), UserCtrl.getUserInfo)
 app.get('/users/:id', registerValidation, UserCtrl.show)
+
+app.get('/tweets',TweetsCtrl.index)
+app.get('/tweets/:id',TweetsCtrl.show)
+app.delete('/tweets/:id',
+//passport.authenticate('jwt'), 
+(req, res)=>{
+    req.user = {"_id":"61dac1ded9aa108d7ce60ec6","email":"a.nikulsheev@gmail.com","fullname":"alexaaaaa","username":"coolsheff","password":"ea48576f30be1669971699c09ad05c94","confirmHash":"87d71bc86ddddc2cbde4b6c363840db3","confirmed":false,"__v":0}
+    TweetsCtrl.delete(req,res)
+})
+app.post('/tweets', 
+//passport.authenticate('jwt'),
+createTweetValidations,
+(req, res)=>{
+    req.user = {"_id":"61dac1ded9aa108d7ce60ec6","email":"a.nikulsheev@gmail.com","fullname":"alexaaaaa","username":"coolsheff","password":"ea48576f30be1669971699c09ad05c94","confirmHash":"87d71bc86ddddc2cbde4b6c363840db3","confirmed":false,"__v":0}
+    TweetsCtrl.create(req,res)
+})
+
+
 app.get('/auth/verify', registerValidation, UserCtrl.verify)
 app.post('/auth/register', registerValidation, UserCtrl.create)
 app.post('/auth/login',
  //passport.authenticate('local', { failureMessage: '/login', session: false }),
 (req, res)=>{
-    req.user = {"_id":{"$oid":"61dac1ded9aa108d7ce60ec6"},"email":"a.nikulsheev@gmail.com","fullname":"alexaaaaa","username":"coolsheff","password":"ea48576f30be1669971699c09ad05c94","confirmHash":"87d71bc86ddddc2cbde4b6c363840db3","confirmed":false,"__v":0}
+    req.user = {"_id":"61dac1ded9aa108d7ce60ec6","email":"a.nikulsheev@gmail.com","fullname":"alexaaaaa","username":"coolsheff","password":"ea48576f30be1669971699c09ad05c94","confirmHash":"87d71bc86ddddc2cbde4b6c363840db3","confirmed":false,"__v":0}
     UserCtrl.afterLogin(req,res)
 })
 
