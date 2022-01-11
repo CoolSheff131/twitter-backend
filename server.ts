@@ -40,6 +40,13 @@ createTweetValidations,
     req.user = {"_id":"61dac1ded9aa108d7ce60ec6","email":"a.nikulsheev@gmail.com","fullname":"alexaaaaa","username":"coolsheff","password":"ea48576f30be1669971699c09ad05c94","confirmHash":"87d71bc86ddddc2cbde4b6c363840db3","confirmed":false,"__v":0}
     TweetsCtrl.create(req,res)
 })
+app.patch('/tweets/:id', 
+//passport.authenticate('jwt'),
+createTweetValidations,
+(req, res)=>{
+    req.user = {"_id":"61dac1ded9aa108d7ce60ec6","email":"a.nikulsheev@gmail.com","fullname":"alexaaaaa","username":"coolsheff","password":"ea48576f30be1669971699c09ad05c94","confirmHash":"87d71bc86ddddc2cbde4b6c363840db3","confirmed":false,"__v":0}
+    TweetsCtrl.update(req,res)
+})
 
 
 app.get('/auth/verify', registerValidation, UserCtrl.verify)
