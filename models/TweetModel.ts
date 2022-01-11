@@ -22,6 +22,8 @@ const TweetSchema = new Schema<TweetModelInterface>({
         type: Schema.Types.ObjectId,
     }
     
+}, {
+    timestamps: true
 })
 
 TweetSchema.set('toJSON',{

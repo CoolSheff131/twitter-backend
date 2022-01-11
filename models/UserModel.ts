@@ -48,6 +48,8 @@ const UserSchema = new Schema<UserModelInterface>({
     },
     about: String,
     website: String,
+}, {
+    timestamps: true
 })
 
 UserSchema.set('toJSON',{
