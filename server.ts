@@ -10,6 +10,20 @@ import bodyParser from 'body-parser'
 import session from 'express-session'
 import { TweetsCtrl } from './controllers/TweetsController';
 import { createTweetValidations } from './validations/createTweet';
+import multer from 'multer';
+import { UploadFileCtrl } from './controllers/UploadFileController';
+
+
+// const storage = multer.diskStorage({
+//     destination: function(req,file,cb){
+//         cb(null,__dirname+'/uploads')
+//     },
+//     filename: function(req,file, cb){
+//         cb(null,file.fieldname)
+//     }
+// })
+const storage = muletr.memoryStorage()
+const upload = multer(storage)
 
 const app = express();
 
@@ -57,6 +71,10 @@ app.post('/auth/login',
     req.user = {"_id":"61dac1ded9aa108d7ce60ec6","email":"a.nikulsheev@gmail.com","fullname":"alexaaaaa","username":"coolsheff","password":"ea48576f30be1669971699c09ad05c94","confirmHash":"87d71bc86ddddc2cbde4b6c363840db3","confirmed":false,"__v":0}
     UserCtrl.afterLogin(req,res)
 })
+
+app.post('/upload',
+ upload.single(''),
+UploadFileCtrl.index)
 
 // app.patch('/users',UserCtrl.update)
 // app.delete('/users',UserCtrl.delete)
