@@ -20,7 +20,12 @@ const TweetSchema = new Schema<TweetModelInterface>({
         required: true,
         ref:'User',
         type: Schema.Types.ObjectId,
-    }
+    },
+    images:[
+        {
+            type: String,
+        },
+    ],
     
 }, {
     timestamps: true
