@@ -71,6 +71,7 @@ class TweetsController{
                 }
                 
                 const tweet = await TweetModel.create(data)
+                user.tweets!.push(tweet._id)
                 
                 res.json({
                     status: 'success',
