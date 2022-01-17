@@ -22,7 +22,7 @@ import { UploadFileCtrl } from './controllers/UploadFileController';
 //         cb(null,file.fieldname)
 //     }
 // })
-const storage = muletr.memoryStorage()
+const storage = multer.memoryStorage()
 const upload = multer(storage)
 
 const app = express();
@@ -73,7 +73,7 @@ app.post('/auth/login',
 })
 
 app.post('/upload',
- upload.single(''),
+ upload.single('image'),
 UploadFileCtrl.index)
 
 // app.patch('/users',UserCtrl.update)

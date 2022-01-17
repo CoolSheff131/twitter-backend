@@ -5,7 +5,7 @@ export interface TweetModelInterface{
     _id?: string;
     text: string;
     user: string;
-
+    images?: string[];
 }
 
 export type TweetModelDocumentInterface = TweetModelInterface & Document

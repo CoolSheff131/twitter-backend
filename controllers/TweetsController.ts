@@ -66,6 +66,7 @@ class TweetsController{
                 const data: TweetModelInterface = {
                     
                     text: req.body.text,
+                    images: req.body.images,
                     user: user._id
                 }
                 
